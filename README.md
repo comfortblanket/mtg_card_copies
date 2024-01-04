@@ -10,6 +10,9 @@ The decklist is provided as a simple collection.csv in the plugin directory, usu
 <p align="center">
   <img src="tcgplayer_example.PNG" alt="TCGPlayer Example">
 </p>
+<p align="center">
+  <img src="scryfall_example.PNG" alt="Scryfall Example">
+</p>
 
 Format is:
 - First line is ignored (assumed to be header)
@@ -21,7 +24,7 @@ Format is:
 - Second value in row is assumed to be the card name
 - Other values are ignored
 
-Currently only works on EDHREC and TCGPlayer. Quantities displayed are based solely on the number of cards you have with that NAME. If they are all different versions, that is not taken into account. Each image with that card name will be labeled with the total number.
+Currently only works on EDHREC, TCGPlayer, and Scryfall. Quantities displayed are based solely on the number of cards you have with that NAME. If they are all different versions, that is not taken into account. Each image with that card name will be labeled with the total number.
 
 ## Setup - Firefox
 
