@@ -1,12 +1,15 @@
 # MTG Card Copies
 
-![EDHREC Example](edhrec_example.png)
-
-![TCGPlayer Example](tcgplayer_example.png)
-
 This is a simple Firefox extension to display the number of copies of each card in a decklist, on a few websites.
 
 The decklist is provided as a simple collection.csv in the plugin directory, usually from deckstats.net export.
+
+<p align="center">
+  <img src="edhrec_example.PNG" alt="EDHREC Example">
+</p>
+<p align="center">
+  <img src="tcgplayer_example.PNG" alt="TCGPlayer Example">
+</p>
 
 Format is:
 - First line is ignored (assumed to be header)
@@ -22,7 +25,7 @@ Currently only works on EDHREC and TCGPlayer. Quantities displayed are based sol
 
 ## Setup - Firefox
 
-1. In Firefox, navigate to: [about:debugging#/runtime/this-firefox]
+1. In Firefox, navigate to: `about:debugging#/runtime/this-firefox`
 2. Click 'Load Temporary Add-on...'
 3. Select any file in the extension directory, such as contentScript.js.
 4. Add your collection.csv file to the same directory.
