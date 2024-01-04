@@ -74,7 +74,11 @@ fetch(chrome.runtime.getURL('collection.csv'))
         console.log('Done loading collection.csv');
         
         console.log('window.location.hostname: ', window.location.hostname);
-        if (window.location.hostname === 'edhrec.com' || window.location.hostname === 'www.tcgplayer.com') {
+        if (
+                    window.location.hostname === 'edhrec.com' || 
+                    window.location.hostname === 'www.tcgplayer.com' ||
+                    window.location.hostname === 'scryfall.com'
+                ) {
             // EDHREC and TCGPlayer
 
             // <img> nodes we've already processed
@@ -154,8 +158,24 @@ fetch(chrome.runtime.getURL('collection.csv'))
                 }
             };
         
-            // Run processImages every 1.5 seconds, mostly for EDHREC, which loads images dynamically
-            setInterval(processImages, 1500);
+            if (window.location.hostname === 'edhrec.com') {
+                // Create a MutationObserver to watch for changes in the DOM
+                let observer = new MutationObserver(function(mutations) {
+                    // If any mutation adds nodes, run processImages
+                    for (let mutation of mutations) {
+                        if (mutation.addedNodes.length) {
+                            processImages();
+                            break;
+                        }
+                    }
+                });
+            
+                // Start observing the document with the configured parameters
+                observer.observe(document, { childList: true, subtree: true });
+            } else {
+                // Run processImages once on TCGPlayer and Scryfall
+                processImages();
+            }
         }
 
     });

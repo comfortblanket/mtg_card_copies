@@ -6,7 +6,7 @@
     "permissions": ["activeTab"],
     "content_scripts": [
       {
-        "matches": ["*://*.edhrec.com/*", "*://*.tcgplayer.com/*"],
+        "matches": ["*://*.edhrec.com/*", "*://*.tcgplayer.com/*", "*://*.scryfall.com/*"],
         "js": ["contentScript.js"]
       }
     ]
