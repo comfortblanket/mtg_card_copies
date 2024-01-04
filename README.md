@@ -1,6 +1,10 @@
 # MTG Card Copies
 
-This is a simple script to count the number of copies of each card in a decklist.
+![EDHREC Example](edhrec_example.png)
+
+![TCGPlayer Example](tcgplayer_example.png)
+
+This is a simple Firefox extension to display the number of copies of each card in a decklist, on a few websites.
 
 The decklist is provided as a simple collection.csv in the plugin directory, usually from deckstats.net export.
 
