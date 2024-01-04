@@ -1,0 +1,13 @@
+{
+    "manifest_version": 2,
+    "name": "MTG Card Checker",
+    "version": "1.0",
+    "description": "Displays how many copies of MTG cards you have on several websites.",
+    "permissions": ["activeTab"],
+    "content_scripts": [
+      {
+        "matches": ["*://*.edhrec.com/*", "*://*.tcgplayer.com/*"],
+        "js": ["contentScript.js"]
+      }
+    ]
+  }
