@@ -1,19 +1,6 @@
-
-let openRequest = indexedDB.open("MyDatabase", 1);
-
-openRequest.onupgradeneeded = function(e) {
-    let db = e.target.result;
-    db.createObjectStore("MyStore", {keyPath: "id"});
-};
-
-openRequest.onsuccess = function(e) {
-    let db = e.target.result;
-    let transaction = db.transaction("MyStore", "readonly");
-    let store = transaction.objectStore("MyStore");
-    let request = store.get("cardQuantities");
-
-    request.onsuccess = function() {
-        let cardQuantities = request.result ? request.result.value : null;
+chrome.storage.local.get('cardQuantities').then(
+    function(result) {
+        let cardQuantities = result.cardQuantities;
 
         console.log('cardQuantities: ', cardQuantities);
 
@@ -123,13 +110,4 @@ openRequest.onsuccess = function(e) {
             // Start observing the document with the configured parameters
             observer.observe(document, { childList: true, subtree: true });
         }
-    };
-
-    request.onerror = function() {
-        console.error('Error getting card quantities from IndexedDB:', request.error);
-    };
-};
-
-openRequest.onerror = function(e) {
-    console.error('Error opening IndexedDB:', e.target.error);
-};
+    });
