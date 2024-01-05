@@ -35,7 +35,9 @@ chrome.storage.local.get('cardQuantities').then(
                         parentDiv = parentDiv.parentNode;
                     }
 
-                    // If the parent <div> contains other processed imgs, skip this <img>
+                    // If the parent <div> contains other processed imgs, skip 
+                    // this <img>. This is to deal with split cards and 
+                    // partner commanders on EDHREC.
                     if (parentDiv) {
                         let foundOtherImg = false;
                         let otherImgs = parentDiv.getElementsByTagName('img');
@@ -50,6 +52,9 @@ chrome.storage.local.get('cardQuantities').then(
                         if (foundOtherImg) {
                             continue;
                         }
+                    } else {
+                        // Quick-fix: If we didn't find a parent <div>, just use the <img>'s parent
+                        parentDiv = img.parentNode;
                     }
 
                     // Note that we've now processed this <img>
@@ -63,12 +68,36 @@ chrome.storage.local.get('cardQuantities').then(
                         .replace(/-\d+$/, '')  // Strip "-0", "-2", etc. from end
                         .replace(/\(.*?\)/g, '')  // Strip out parentheses
                         .trim();
-
+                    
+                    let useCardNames = [];
                     if (cardQuantities.hasOwnProperty(cardName)) {
+                        useCardNames.push(cardName);
+                    }
+
+                    // Faces of split cards -- actually for partner commanders on EDHREC
+                    if (cardName.includes('//')) {
+                        for (let splitPart of cardName.split('//')) {
+                            splitPart = splitPart.trim();
+                            if (cardQuantities.hasOwnProperty(splitPart)) {
+                                useCardNames.push(splitPart);
+                            } else {
+                                useCardNames.push(null);
+                            }
+                        }
+                    }
+
+                    let quantityString = 'Collected: ';
+                    if (useCardNames.some(cardName => cardName !== null)) {
+                        quantityString += useCardNames.map(cardName => cardQuantities[cardName] ? cardQuantities[cardName] : 0).join(' // ');
+                    } else {
+                        useCardNames = [];
+                    }
+                    
+                    if (useCardNames.length > 0) {
                         // We have a copy of this card, so add a label to the image
                         // console.log('HAVE ' + cardName + ' (' + cardQuantities[cardName] + ')');
                         let quantityLabel = document.createElement('div');
-                        quantityLabel.textContent = 'Collected: ' + cardQuantities[cardName];
+                        quantityLabel.textContent = quantityString;
                         quantityLabel.style.position = 'absolute';
                         quantityLabel.style.right = '0';
                         quantityLabel.style.top = '50%';
