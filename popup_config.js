@@ -1,90 +1,95 @@
+
+// Button listener for the "Browse" button
 document.getElementById('loadButton').addEventListener('click', function() {
     let fileInput = document.getElementById('fileInput');
     let file = fileInput.files[0];
     let reader = new FileReader();
 
-    document.getElementById('statusMessage').textContent = 'Loading... (don\'t close this popup!)';
-    
+    // Called once the file is loaded
     reader.onload = function(e) {
-        console.log('Loading file...');
+        console.log('Parsing file: ', file.name);
         let text = e.target.result;
 
         // Parse the CSV data
+
+        // Map from lower-case card name to quantity in collection
         let cardQuantities = {};
+
         let lines = text.split('\n');
-
-        // Skip the header row
-        lines.shift();
-
-        console.log('Parsing file...');
+        lines.shift();  // Skip the header row
+        
+        let lineNum = 1;
         for (let line of lines) {
-            let commaIndex = line.indexOf(',');
-
-            // Skip lines without a comma
-            if (commaIndex === -1) {
-                continue;
-            }
-
-            let amount = line.substring(0, commaIndex);
-            let remainingRow = line.substring(commaIndex + 1);
-            let cardName;
-
-            if (remainingRow) {
-                if (remainingRow.startsWith('"')) {
-                    let endQuoteIndex = remainingRow.indexOf('"', 1);
-                    cardName = remainingRow.substring(1, endQuoteIndex);
-                } else {
-                    let nextCommaIndex = remainingRow.indexOf(',');
-                    cardName = remainingRow.substring(0, nextCommaIndex);
+            try {
+                let firstCommaIndex = line.indexOf(',');
+        
+                // Log a warning and skip lines without a comma
+                if (firstCommaIndex === -1) {
+                    console.warn(`Warning: Line ${lineNum} does not contain a comma: "${line}"\nSkipping line.`);
+                    lineNum++;
+                    continue;
                 }
-
-                cardName = cardName.trim().toLowerCase();
-
-                let [cardNameFront] = cardName.split('//', 1);
-                if (cardNameFront) {
-                    cardNameFront = cardNameFront.trim();
-                    if (cardNameFront !== cardName) {
-                        if (cardQuantities.hasOwnProperty(cardNameFront)) {
-                            cardQuantities[cardNameFront] += parseInt(amount.trim());
-                        } else {
-                            cardQuantities[cardNameFront] = parseInt(amount.trim());
+        
+                let cardAmount = line.substring(0, firstCommaIndex);
+                let remainingRow = line.substring(firstCommaIndex + 1);
+                let cardName;
+        
+                if (remainingRow) {
+                    if (remainingRow.startsWith('"')) {
+                        let endQuoteIndex = remainingRow.indexOf('"', 1);
+                        if (endQuoteIndex === -1) {
+                            throw new Error(`Line ${lineNum} starts with a double-quote but does not have a closing double-quote:\n\`${line}\`\nSkipping line.`);
+                        }
+                        cardName = remainingRow.substring(1, endQuoteIndex);
+                    } else {
+                        let nextCommaIndex = remainingRow.indexOf(',');
+                        if (nextCommaIndex === -1) {
+                            throw new Error(`Line ${lineNum} does not contain a second comma:\n\`${line}\`\nSkipping line.`);
+                        }
+                        cardName = remainingRow.substring(0, nextCommaIndex);
+                    }
+        
+                    cardName = cardName.trim().toLowerCase();
+        
+                    // Handle split cards by storing their front name in addition to the full name
+                    let [cardNameFront] = cardName.split('//', 1);
+                    if (cardNameFront) {
+                        cardNameFront = cardNameFront.trim();
+                        if (cardNameFront !== cardName) {
+                            if (cardQuantities.hasOwnProperty(cardNameFront)) {
+                                cardQuantities[cardNameFront] += parseInt(cardAmount.trim());
+                            } else {
+                                cardQuantities[cardNameFront] = parseInt(cardAmount.trim());
+                            }
                         }
                     }
+        
+                    if (cardQuantities.hasOwnProperty(cardName)) {
+                        cardQuantities[cardName] += parseInt(cardAmount.trim());
+                    } else {
+                        cardQuantities[cardName] = parseInt(cardAmount.trim());
+                    }
                 }
-
-                if (cardQuantities.hasOwnProperty(cardName)) {
-                    cardQuantities[cardName] += parseInt(amount.trim());
-                } else {
-                    cardQuantities[cardName] = parseInt(amount.trim());
-                }
+            } catch (error) {
+                console.error(`Error processing line ${lineNum}: "${line}"\nError:\n`, error);
             }
+            lineNum++;
         }
         
         // Save the card quantities to chrome.storage.local
-        chrome.storage.local.set({'cardQuantities': cardQuantities}, function() {
+        chrome.storage.local.set({'filepath': file.name, 'cardQuantities': cardQuantities}, function() {
             if (chrome.runtime.lastError) {
-                console.error('Error storing cardQuantities:', chrome.runtime.lastError);
+                console.error('Error storing cardQuantities:\n', chrome.runtime.lastError);
                 return;
             }
-        
             console.log('Collection stored in chrome.storage.local');
-            document.getElementById('statusMessage').textContent = 'File loaded (you may close this popup now)';
-        
-            chrome.storage.local.get(['cardQuantities'], function(result) {
-                if (chrome.runtime.lastError) {
-                    console.error('Error retrieving cardQuantities:', chrome.runtime.lastError);
-                    return;
-                }
-        
-                if (result.cardQuantities) {
-                    console.log('Retrieved card quantities:', result.cardQuantities);
-                } else {
-                    console.log('No card quantities in chrome.storage.local');
-                }
-            });
+            document.getElementById('statusMessage').textContent = 'File loaded (you may close this config window now)';
         });
     }
 
+    document.getElementById('statusMessage').textContent = 'Loading... (don\'t close this config window yet)';
+
+    // Read the file
     reader.readAsText(file);
 });
 
@@ -100,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('statusMessage').textContent = 'Loaded file: ' + result.filepath;
         } else {
             console.log('No filepath in chrome.storage.local');
-            document.getElementById('statusMessage').textContent = 'No file loaded';
+            document.getElementById('statusMessage').textContent = 'Loaded file: None';
         }
     });
 });
