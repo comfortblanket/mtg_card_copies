@@ -5,13 +5,13 @@ This is a simple Firefox extension to display the number of copies of each card 
 The decklist is provided as a simple collection.csv in the plugin directory, usually from deckstats.net export.
 
 <p align="center">
-  <img src="edhrec_example.PNG" alt="EDHREC Example">
+  <img src="images/example_edhrec.png" alt="EDHREC Example">
 </p>
 <p align="center">
-  <img src="tcgplayer_example.PNG" alt="TCGPlayer Example">
+  <img src="images/example_tcgplayer.png" alt="TCGPlayer Example">
 </p>
 <p align="center">
-  <img src="scryfall_example.PNG" alt="Scryfall Example">
+  <img src="images/example_scryfall.png" alt="Scryfall Example">
 </p>
 
 Format is:
@@ -26,9 +26,15 @@ Format is:
 
 Currently only works on EDHREC, TCGPlayer, and Scryfall. Quantities displayed are based solely on the number of cards you have with that NAME. If they are all different versions, that is not taken into account. Each image with that card name will be labeled with the total number.
 
-## Setup - Firefox
+## Temporary Setup - Firefox
 
 1. In Firefox, navigate to: `about:debugging#/runtime/this-firefox`
 2. Click 'Load Temporary Add-on...'
 3. Select any file in the extension directory, such as contentScript.js.
-4. Add your collection.csv file to the same directory.
+
+## Usage
+
+1. Open your list of extensions and click the button for the MTG Card Copies extension. This will open a config window.
+2. Click Browse to find your collection CSV file.
+3. Click Load.
+4. Don't close the config window until the status message tells you you may, or else your file may not be read in properly.

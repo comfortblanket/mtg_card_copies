@@ -6,8 +6,8 @@ browser.browserAction.onClicked.addListener(function(tab) {
     // doesn't play nice with the file input (it closes as soon as you click 
     // 'Browse...', and then the load script stops running)
     browser.windows.create({
-        url: 'popup_config.html',
-        width: 500,
+        url: 'src/config/popup_config.html',
+        width: 550,
         height: 650,
         type: 'popup'
     });

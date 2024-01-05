@@ -1,18 +1,18 @@
 {
   "manifest_version": 2,
   "name": "MTG Card Copies",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Displays how many copies of MTG cards you have on several websites.",
   "permissions": ["activeTab", "storage"],
   "content_scripts": [
     {
       "matches": ["*://*.edhrec.com/*", "*://*.tcgplayer.com/*", "*://*.scryfall.com/*", "*://*.deckstats.net/*"],
-      "js": ["mtg_collected_copies.js"]
+      "js": ["src/content/mtg_collected_copies.js"]
     }
   ], 
   "browser_action": {},
   "background": {
-    "scripts": ["background.js"], 
+    "scripts": ["src/background/background.js"], 
     "persistent": false
   }
 }

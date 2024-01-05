@@ -77,35 +77,35 @@ document.getElementById('loadButton').addEventListener('click', function() {
         }
         
         // Save the card quantities to chrome.storage.local
-        chrome.storage.local.set({'filepath': file.name, 'cardQuantities': cardQuantities}, function() {
+        chrome.storage.local.set({'collectionFilepath': file.name, 'cardQuantities': cardQuantities}, function() {
             if (chrome.runtime.lastError) {
                 console.error('Error storing cardQuantities:\n', chrome.runtime.lastError);
                 return;
             }
             console.log('Collection stored in chrome.storage.local');
-            document.getElementById('statusMessage').textContent = 'File loaded (you may close this config window now)';
+            document.getElementById('statusMessage').textContent = 'Collection file loaded [you may close this config window now]';
         });
     }
 
-    document.getElementById('statusMessage').textContent = 'Loading... (don\'t close this config window yet)';
+    document.getElementById('statusMessage').textContent = 'Loading collection file... [don\'t close this config window yet]';
 
     // Read the file
     reader.readAsText(file);
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    chrome.storage.local.get(['filepath'], function(result) {
+    chrome.storage.local.get(['collectionFilepath'], function(result) {
         if (chrome.runtime.lastError) {
-            console.error('Error retrieving filepath:', chrome.runtime.lastError);
+            console.error('Error retrieving collection filepath:', chrome.runtime.lastError);
             return;
         }
     
-        if (result.filepath) {
-            console.log('Got filepath:', result.filepath);
-            document.getElementById('statusMessage').textContent = 'Loaded file: ' + result.filepath;
+        if (result.collectionFilepath) {
+            console.log('Got collection filepath:', result.collectionFilepath);
+            document.getElementById('statusMessage').textContent = 'Loaded collection file: ' + result.collectionFilepath;
         } else {
-            console.log('No filepath in chrome.storage.local');
-            document.getElementById('statusMessage').textContent = 'Loaded file: None';
+            console.log('No collection filepath in chrome.storage.local');
+            document.getElementById('statusMessage').textContent = 'Loaded collection file: None';
         }
     });
 });
