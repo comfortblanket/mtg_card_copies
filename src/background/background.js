@@ -8,7 +8,7 @@ browser.browserAction.onClicked.addListener(function(tab) {
     browser.windows.create({
         url: 'src/config/popup_config.html',
         width: 550,
-        height: 650,
+        height: 700,
         type: 'popup'
     });
 });

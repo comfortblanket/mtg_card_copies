@@ -1,4 +1,3 @@
-
 // Button listener for the "Browse" button
 document.getElementById('loadButton').addEventListener('click', function() {
     let fileInput = document.getElementById('fileInput');
@@ -108,4 +107,24 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('statusMessage').textContent = 'Loaded collection file: None';
         }
     });
+
+    // Load LICENSE text into popup_config.html
+    fetch(chrome.runtime.getURL('LICENSE'))
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('license').textContent = data;
+        })
+        .catch(error => {
+            console.error(`Error loading LICENSE:\n${error}`);
+        });
+
+    // Load DISCLAIMER text into popup_config.html
+    fetch(chrome.runtime.getURL('DISCLAIMER'))
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('disclaimer').textContent = data;
+        })
+        .catch(error => {
+            console.error(`Error loading DISCLAIMER:\n${error}`);
+        });
 });
