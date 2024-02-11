@@ -20,53 +20,66 @@ document.getElementById('loadButton').addEventListener('click', function() {
         let lineNum = 1;
         for (let line of lines) {
             try {
-                let firstCommaIndex = line.indexOf(',');
-        
-                // Log a warning and skip lines without a comma
-                if (firstCommaIndex === -1) {
-                    console.warn(`Warning: Line ${lineNum} does not contain a comma: "${line}"\nSkipping line.`);
-                    lineNum++;
-                    continue;
+                // normalize("NFD") decomposes the string into base characters 
+                // and combining characters (diacritics), and then 
+                // replace(/[\u0300-\u036f]/g, "") removes the diacritics.
+                let cleanLine = line.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+                let lineVersions = [line];
+                if (cleanLine !== line) {
+                    lineVersions.push(cleanLine);
                 }
-        
-                let cardAmount = line.substring(0, firstCommaIndex);
-                let remainingRow = line.substring(firstCommaIndex + 1);
-                let cardName;
-        
-                if (remainingRow) {
-                    if (remainingRow.startsWith('"')) {
-                        let endQuoteIndex = remainingRow.indexOf('"', 1);
-                        if (endQuoteIndex === -1) {
-                            throw new Error(`Line ${lineNum} starts with a double-quote but does not have a closing double-quote:\n\`${line}\`\nSkipping line.`);
-                        }
-                        cardName = remainingRow.substring(1, endQuoteIndex);
-                    } else {
-                        let nextCommaIndex = remainingRow.indexOf(',');
-                        if (nextCommaIndex === -1) {
-                            throw new Error(`Line ${lineNum} does not contain a second comma:\n\`${line}\`\nSkipping line.`);
-                        }
-                        cardName = remainingRow.substring(0, nextCommaIndex);
+
+                for (let line of lineVersions) {
+
+                    let firstCommaIndex = line.indexOf(',');
+            
+                    // Log a warning and skip lines without a comma
+                    if (firstCommaIndex === -1) {
+                        console.warn(`Warning: Line ${lineNum} does not contain a comma: "${line}"\nSkipping line.`);
+                        lineNum++;
+                        continue;
                     }
-        
-                    cardName = cardName.trim().toLowerCase();
-        
-                    // Handle split cards by storing their front name in addition to the full name
-                    let [cardNameFront] = cardName.split('//', 1);
-                    if (cardNameFront) {
-                        cardNameFront = cardNameFront.trim();
-                        if (cardNameFront !== cardName) {
-                            if (cardQuantities.hasOwnProperty(cardNameFront)) {
-                                cardQuantities[cardNameFront] += parseInt(cardAmount.trim());
-                            } else {
-                                cardQuantities[cardNameFront] = parseInt(cardAmount.trim());
+            
+                    let cardAmount = line.substring(0, firstCommaIndex);
+                    let remainingRow = line.substring(firstCommaIndex + 1);
+                    let cardName;
+            
+                    if (remainingRow) {
+                        if (remainingRow.startsWith('"')) {
+                            let endQuoteIndex = remainingRow.indexOf('"', 1);
+                            if (endQuoteIndex === -1) {
+                                throw new Error(`Line ${lineNum} starts with a double-quote but does not have a closing double-quote:\n\`${line}\`\nSkipping line.`);
+                            }
+                            cardName = remainingRow.substring(1, endQuoteIndex);
+                        } else {
+                            let nextCommaIndex = remainingRow.indexOf(',');
+                            if (nextCommaIndex === -1) {
+                                throw new Error(`Line ${lineNum} does not contain a second comma:\n\`${line}\`\nSkipping line.`);
+                            }
+                            cardName = remainingRow.substring(0, nextCommaIndex);
+                        }
+            
+                        cardName = cardName.trim().toLowerCase();
+            
+                        // Handle split cards by storing their front name in addition to the full name
+                        let [cardNameFront] = cardName.split('//', 1);
+                        if (cardNameFront) {
+                            cardNameFront = cardNameFront.trim();
+                            if (cardNameFront !== cardName) {
+                                if (cardQuantities.hasOwnProperty(cardNameFront)) {
+                                    cardQuantities[cardNameFront] += parseInt(cardAmount.trim());
+                                } else {
+                                    cardQuantities[cardNameFront] = parseInt(cardAmount.trim());
+                                }
                             }
                         }
-                    }
-        
-                    if (cardQuantities.hasOwnProperty(cardName)) {
-                        cardQuantities[cardName] += parseInt(cardAmount.trim());
-                    } else {
-                        cardQuantities[cardName] = parseInt(cardAmount.trim());
+            
+                        if (cardQuantities.hasOwnProperty(cardName)) {
+                            cardQuantities[cardName] += parseInt(cardAmount.trim());
+                        } else {
+                            cardQuantities[cardName] = parseInt(cardAmount.trim());
+                        }
                     }
                 }
             } catch (error) {
@@ -83,10 +96,14 @@ document.getElementById('loadButton').addEventListener('click', function() {
             }
             console.log('Collection stored in chrome.storage.local');
             document.getElementById('statusMessage').textContent = 'Collection file loaded [you may close this config window now]';
+            document.getElementById('statusMessage').classList.remove('alert-info', 'alert-danger', 'alert-success');
+            document.getElementById('statusMessage').classList.add('alert-success');
         });
     }
 
     document.getElementById('statusMessage').textContent = 'Loading collection file... [don\'t close this config window yet]';
+    document.getElementById('statusMessage').classList.remove('alert-info', 'alert-danger', 'alert-success');
+    document.getElementById('statusMessage').classList.add('alert-danger');
 
     // Read the file
     reader.readAsText(file);
@@ -106,6 +123,9 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('No collection filepath in chrome.storage.local');
             document.getElementById('statusMessage').textContent = 'Loaded collection file: None';
         }
+
+        document.getElementById('statusMessage').classList.remove('alert-info', 'alert-danger', 'alert-success');
+        document.getElementById('statusMessage').classList.add('alert-info');
     });
 
     // Load LICENSE text into popup_config.html
