@@ -56,6 +56,7 @@ chrome.storage.local.get('cardQuantities').then(
                 // Clean up the card name from the image's alt text
                 let cardName = img.alt
                     .toLowerCase()
+                    .replace(/ [0-9]+$/, '')  // Replace trailing numbers
                     .replace('product image for', '')  // Strip out "Product Image for"
                     .replace('- full art', '')  // Strip out "- Full Art"
                     .replace(/-\d+$/, '')  // Strip "-0", "-2", etc. from end
