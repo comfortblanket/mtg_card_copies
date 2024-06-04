@@ -12,7 +12,8 @@
         "*://*.scryfall.com/*", 
         "*://*.deckstats.net/*", 
         "*://*.commandersherald.com/*", 
-        "*://*.mtggoldfish.com/*"
+        "*://*.mtggoldfish.com/*", 
+        "*://*.archidekt.com/*"
       ],
       "js": ["src/content/mtg_collected_copies.js"]
     }
