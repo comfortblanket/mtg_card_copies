@@ -6,7 +6,14 @@
   "permissions": ["activeTab", "storage"],
   "content_scripts": [
     {
-      "matches": ["*://*.edhrec.com/*", "*://*.tcgplayer.com/*", "*://*.scryfall.com/*", "*://*.deckstats.net/*"],
+      "matches": [
+        "*://*.edhrec.com/*", 
+        "*://*.tcgplayer.com/*", 
+        "*://*.scryfall.com/*", 
+        "*://*.deckstats.net/*", 
+        "*://*.commandersherald.com/*", 
+        "*://*.mtggoldfish.com/*"
+      ],
       "js": ["src/content/mtg_collected_copies.js"]
     }
   ], 
