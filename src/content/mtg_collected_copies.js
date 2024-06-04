@@ -53,7 +53,7 @@ chrome.storage.local.get('cardQuantities').then(
             // Clean up the card name from the image's alt text
             let cardName = img.alt
                 .toLowerCase()
-                .replace(/ [-a-z0-9]+$/, '')  // Replace trailing combinations of numbers, dashes, and letters
+                .replace(/ [-a-z0-9]*[0-9][-a-z0-9]*$/, '')  // Replace trailing combinations of numbers, dashes, and letters
                 .replace('product image for', '')  // Strip out "Product Image for"
                 .replace('- full art', '')  // Strip out "- Full Art"
                 .replace(/-\d+$/, '')  // Strip "-0", "-2", etc. from end
@@ -138,25 +138,4 @@ chrome.storage.local.get('cardQuantities').then(
     
         // Start observing the document with the configured parameters
         observer.observe(document, { childList: true, subtree: true });
-
-        // Create an IntersectionObserver to watch for elements entering the viewport
-        let intersectionObserver = new IntersectionObserver(function(entries) {
-            for (let entry of entries) {
-
-                if (entry.isIntersecting) {
-                    // The entry is intersecting the viewport
-
-                    let imgElements = entry.target.getElementsByTagName('img');
-                    for (let img of imgElements) {
-                        processImage(img);
-                    }
-                }
-            }
-        });
-        
-        // Observe all divs with class=lazy-image__wrapper in the document
-        let divs = document.getElementsByClassName('lazy-image__wrapper');
-        for (let div of divs) {
-            intersectionObserver.observe(div);
-        }
     });
