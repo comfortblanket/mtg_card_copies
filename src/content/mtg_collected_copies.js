@@ -50,7 +50,7 @@ chrome.storage.local.get('cardQuantities').then(
                     parentDiv = img.parentNode;
                 }
 
-                // Note that we've now processed this <img>
+                // Make a note that we've now processed this <img>
                 processedImages.add(img);
 
                 // Clean up the card name from the image's alt text
@@ -60,6 +60,7 @@ chrome.storage.local.get('cardQuantities').then(
                     .replace('- full art', '')  // Strip out "- Full Art"
                     .replace(/-\d+$/, '')  // Strip "-0", "-2", etc. from end
                     .replace(/\(.*?\)/g, '')  // Strip out parentheses
+                    .replace(/\[.*?\]/g, '')  // Strip out square brackets
                     .trim();
                 
                 let useCardNames = [];
